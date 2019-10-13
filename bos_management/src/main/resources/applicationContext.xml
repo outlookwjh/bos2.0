@@ -27,32 +27,46 @@
 		<property name="password" value="${jdbc.password}"/>
 	</bean>
 
-	<!--配置jpa-->
-	<bean id="jpaManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-		<property name="jpaDialect">
-			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaDialect"></bean>
+	<!-- 整合JPA配置 -->
+	<bean id="entityManagerFactory"
+		  class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
+		<property name="dataSource" ref="dataSource" />
+		<property name="packagesToScan" value="com.wjh.domain" />
+		<property name="persistenceProvider">
+			<bean class="org.hibernate.jpa.HibernatePersistenceProvider" />
 		</property>
 		<property name="jpaVendorAdapter">
 			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-				<property name="generateDdl" value="true"/>
-				<property name="showSql" value="true"/>
-				<property name="database" value="ORACLE"/>
-				<property name="databasePlatform" value="org.hibernate.dialect.Oracle10gDialect"/>
-
+				<property name="generateDdl" value="true" />
+				<property name="database" value="ORACLE" />
+				<property name="databasePlatform" value="org.hibernate.dialect.Oracle10gDialect" />
+				<property name="showSql" value="true" />
 			</bean>
 		</property>
-
-		<property name="dataSource" ref="dataSource"/>
-		<property name="packagesToScan" value="com.wjh.domain"/>
-		<property name="persistenceProvider">
-			<bean class="org.hibernate.jpa.HibernatePersistenceProvider"/>
+		<property name="jpaDialect">
+			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaDialect" />
+		</property>
+		<property name="jpaPropertyMap">
+			<map>
+				<entry key="hibernate.query.substitutions" value="true 1, false 0" />
+				<entry key="hibernate.default_batch_fetch_size" value="16" />
+				<entry key="hibernate.max_fetch_depth" value="2" />
+				<entry key="hibernate.generate_statistics" value="true" />
+				<entry key="hibernate.bytecode.use_reflection_optimizer"
+					   value="true" />
+				<entry key="hibernate.cache.use_second_level_cache" value="false" />
+				<entry key="hibernate.cache.use_query_cache" value="false" />
+			</map>
 		</property>
 	</bean>
 
-	<!--事务配置-->
+	<!-- JPA事务管理器  -->
 	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-		<property name="entityManagerFactory" ref="jpaManagerFactory"/>
+		<property name="entityManagerFactory" ref="entityManagerFactory" />
 	</bean>
-	<tx:annotation-driven transaction-manager="transactionManager" />
-	
+
+	<!-- 注解管理事务 -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	<!--spring data jpa-->
+	<jpa:repositories base-package="com.wjh.dao"/>
 </beans>
