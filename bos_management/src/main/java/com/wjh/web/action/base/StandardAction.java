@@ -46,6 +46,8 @@ public class StandardAction extends ActionSupport implements ModelDriven<Standar
         this.rows = rows;
     }
 
+
+
     @Override
     public Standard getModel() {
         return standard;
@@ -84,5 +86,8 @@ public class StandardAction extends ActionSupport implements ModelDriven<Standar
         ActionContext.getContext().getValueStack().push(all);
         return SUCCESS;
     }
+
+
+
 
 }
